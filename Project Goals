@@ -1,0 +1,77 @@
+			Android Attendance Application
+Goal: To create a mobile application that will scan ID cards for attendance and maintain one trimester attendance for all faculty members classes.
+
+
+Team:
+Software Developer: Colin
+Software Developer: Joe
+Github Scrum Master: Mark
+Research/ Documentation: Victor
+
+
+Criteria:
+Android Application for Phone
+Hardware to scan ID 
+Present/ Absent/ Tardy options when signing in
+
+
+Constraints:
+Access to Johnson & Wales student records Database
+How to scan the users ID?
+Hardware  - To scan the ID card
+Time - How long do you have to finish the program (6 weeks)
+Schedule - How often you work on the program day to day (EX: Class time or Personal time)
+Programing language ex: (Github Scrum) - “Somebody has to learn Scrum” Scrum 101 Videos
+Use of specific library scripts or frameworks
+Team composition and makeup - Do you need a specialist to be on the team(Specific individuals, perhaps for training purposes)
+Lack of accountability
+Groups need platform for development
+Team Burn out over the course of the project(Velocity)
+Missing Student ID’s
+Cost of project
+
+
+Desirables: 
+Ex: “ It would be nice to have ”
+If the program runs
+Break down certain task into sections (Divide and conquer method)
+Reach our deadlines on time
+Control cost depending on the amount spent(Is the software your using free or do you pay)
+Clean code making sure that the code does not have any bugs in it. Which can slow the attendance sign in process down.
+Quality management How well the program performs. 
+Constant communication and feedback
+Stay on task- some workers will check their emails, social media, or just not focus when it's time to work.
+No scope changes - Making sure that the client does not want to make any last second changes after you begin to code
+
+
+Ex “Project must have”
+A fully design and known goal
+Must be able to scan a students ID and place it in a database.
+Must work on an android application
+
+Data Gathering - Things you don't know yet 
+How long is it going to take to enter a Student into attendance system
+How effective is mobile scanner(The ease of time to scan the ID)
+
+
+Colin’s Weekly Work:
+Week 1: Research accessing camera, scanning for text (names and J number)
+Week 2:  
+
+Joe’s Weekly Work:
+Week 1: research or begin setting up database
+
+Victor’s Weekly Work:
+Week 1: Work on Constraints for the project
+Week 2: Work on Desirables for the project
+
+Fib numbers 1 2 3 5 8 13 21
+
+Today-17th
+17th-29th
+29th-nov 7th
+Nov 7th-21th
+
+Check for late/absent:
+Time limit
+Button for absent
