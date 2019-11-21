@@ -1,19 +1,10 @@
-package com.google.android.gms.samples.vision.ocrreader;
-
-import android.util.Log;
-
-import com.google.firebase.database.DatabaseReference;
-
-import java.time.LocalTime;
+package com.c.idscanner;
 
 public class Student {
-    private String Namelast, Namefirst;
+    private String Namelast,jnum;
     private String tardy;
 
     public Student() {
-        Namelast = "";
-        Namefirst = "";
-        tardy = "-1";
     }
 
     public String getNamelast() {
@@ -21,31 +12,16 @@ public class Student {
         return Namelast;
     }
 
-    public void setNamelast(String namelast) {
+    public void setNames(String namelast) {
 
         Namelast = namelast;
     }
 
-    public String getNamefirst() {
-
-        return Namefirst;
+    public String getJnum() {
+        return jnum;
+    }
+    public void setJnum(String jn){
+        jnum = jn;
     }
 
-    public void setNamefirst(String namefirst) {
-
-        Namefirst = namefirst;
-    }
-
-    public void setTardy(LocalTime clockin, LocalTime classstart) {
-
-        if(classstart.compareTo(clockin)>=0){
-            Log.i("tardy","onTime");
-            tardy = "1";
-        }
-        else {
-            Log.i("tardy","noTime");
-            tardy = "0";
-        }
-
-    }
 }

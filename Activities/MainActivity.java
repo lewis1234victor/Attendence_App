@@ -1,101 +1,156 @@
-package com.google.android.gms.samples.vision.ocrreader;
+package com.c.idscanner;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.samples.vision.ocrreader.R;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.util.ArrayList;
 
 /**
  * Main activity demonstrating how to pass extra parameters to an activity that
  * recognizes text.
  */
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     // Use a compound button so either checkbox or switch widgets work.
-    private CompoundButton autoFocus;
-    private CompoundButton useFlash;
     private TextView statusMessage;
-    private TextView textValue;
     DatabaseReference reff;
-    Student student = new Student();
-
+    Button addstu,attend;
+    FirebaseAuth mFirebaseAuth;
+    private ListView list;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> arrayList;
+    String clakey;
+    int i=0;
+    String[] keys = new String[100];
+    String stukey;
     private static final int RC_OCR_CAPTURE = 9003;
     private static final String TAG = "hope";
+    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         FirebaseApp.initializeApp(this);
-        reff= FirebaseDatabase.getInstance().getReference().child("Professors");
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        reff= FirebaseDatabase.getInstance().getReference();
         statusMessage = (TextView)findViewById(R.id.status_message);
-        textValue = (TextView)findViewById(R.id.text_value);
-        autoFocus = (CompoundButton) findViewById(R.id.auto_focus);
-        useFlash = (CompoundButton) findViewById(R.id.use_flash);
+        addstu = (Button)findViewById(R.id.addstu);
+        list = (ListView)findViewById(R.id.stulist);
+        attend = findViewById(R.id.attend);
+        statusMessage.setText(getIntent().getStringExtra("class_name")+"!"+getIntent().getStringExtra("class_time"));
 
-        findViewById(R.id.read_text).setOnClickListener(new  View.OnClickListener(){
+        arrayList = new ArrayList<String>();
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrayList);
 
+        list.setAdapter(adapter);
+        clakey = getIntent().getStringExtra("class_key");
+        Log.i("errors","null??:"+clakey);
+        final String user_id = mFirebaseAuth.getInstance().getCurrentUser().getUid();
+        reff.child(user_id).child("Classes").child(clakey).child("Student").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                if (v.getId() == R.id.read_text) {
-                    // launch Ocr capture activity.
-                    Log.i(TAG,"inclick");
-                    Intent intent = new Intent(MainActivity.this, OcrCaptureActivity.class);
-                    intent.putExtra(OcrCaptureActivity.AutoFocus, autoFocus.isChecked());
-                    intent.putExtra(OcrCaptureActivity.UseFlash, useFlash.isChecked());
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("errors","inondata");
+                String tempjnum,templname,tempinfo;
+                adapter.clear();
+                for (DataSnapshot cs : dataSnapshot.getChildren()) {
+                    Log.i("errors","infirstfordata");
+                    tempjnum = cs.child("jnum").getValue().toString();
+                    templname = cs.child("namelast").getValue().toString();
+                    keys[i]=cs.getKey();
+                    stukey=keys[i];
 
-                    Log.i(TAG,"past settings");
-                    startActivityForResult(intent, RC_OCR_CAPTURE);
+                    if(tempjnum.equals(getIntent().getStringExtra("jnum"))&&templname.equals(getIntent().getStringExtra("name"))){
+                        String t=statusMessage.getText().toString();
+                        String[] tk=t.split("!");
+                        String time=tk[1];
+                        Log.i("errors","time:"+time);
+                        time = time.substring(0,5);
+                        if(LocalTime.now().isAfter(LocalTime.parse(time))){
+                            Log.i("errors","inif");
+                            for (DataSnapshot c : cs.getChildren()) {
+                                Log.i("errors","infor");
+                                int tardy = Integer.parseInt(c.child("t").getValue().toString());
+                                tardy++;
+                                reff.child(user_id).child("Classes").child(clakey).child("Student").child(keys[i]).child(c.getKey()).child("t").setValue(tardy);
+                                break;
+                            }
+                        }
+                        else{
+                            Log.i("errors","inifelse");
+                            for (DataSnapshot c : cs.getChildren()) {
+                                Log.i("errors","infor");
+                                int ontime = Integer.parseInt(c.child("ot").getValue().toString());
+                                ontime++;
+                                reff.child(user_id).child("Classes").child(clakey).child("Student").child(keys[i]).child(c.getKey()).child("ot").setValue(ontime );
+                                break;
+                            }
+
+                        }
+                    }
+                    Log.i("errors",getIntent().getStringExtra("jnum")+" "+tempjnum+getIntent().getStringExtra("name")+templname);
+                    Log.i("errors","i:"+i);
+                    Log.i("errors","children:"+dataSnapshot.getChildrenCount());
+                    tempinfo = "Name:" + templname + "\n" + "JNumber:" + tempjnum;
+                    i++;
+                    arrayList.add(tempinfo);
+                    adapter.notifyDataSetChanged();
                 }
+            }
+            @Override
+            public void onCancelled(DatabaseError dbe) {
+
             }
         });
-    }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.read_text) {
-            // launch Ocr capture activity.
-            Log.i(TAG,"inclick");
-            Intent intent = new Intent(this, OcrCaptureActivity.class);
-            intent.putExtra(OcrCaptureActivity.AutoFocus, autoFocus.isChecked());
-            intent.putExtra(OcrCaptureActivity.UseFlash, useFlash.isChecked());
+        addstu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,add_student.class);
+                intent.putExtra("class_key",clakey);
+                String t=statusMessage.getText().toString();
+                String[] tk=t.split("|");
+                Log.i("errors","tk0:"+tk[0]);
+                Log.i("errors","tk1:"+tk[1]);
+                intent.putExtra("class_name",tk[0]);
+                intent.putExtra("class_time",tk[1]);
+                startActivity(intent);
 
-            Log.i(TAG,"past settings");
-            startActivityForResult(intent, RC_OCR_CAPTURE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == RC_OCR_CAPTURE) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                if (data != null) {
-                    String text = data.getStringExtra(OcrCaptureActivity.TextBlockObject);
-                    statusMessage.setText(R.string.ocr_success);
-                    textValue.setText(text);
-                    student.setNamefirst(data.getStringExtra(OcrCaptureActivity.TextBlockObject));
-                    reff.push().child("profname").child("classname").child("studentname").setValue(student);
-                    Log.d(TAG, "Text read: " + text);
-                } else {
-                    statusMessage.setText(R.string.ocr_failure);
-                    Log.d(TAG, "No Text captured, intent data is null");
-                }
-            } else {
-                statusMessage.setText(String.format(getString(R.string.ocr_error),
-                        CommonStatusCodes.getStatusCodeString(resultCode)));
             }
-        }
-        else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+        });
+        attend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(MainActivity.this, OcrCaptureActivity.class);
+                Log.i("errors","clakeyocr:"+clakey);
+                intent.putExtra("class_key",clakey);
+                String t=statusMessage.getText().toString();
+                String[] tk=t.split("!");
+                Log.i("errors","tk0:"+tk[0]);
+                Log.i("errors","tk1:"+tk[1]);
+                intent.putExtra("class_name",tk[0]);
+                intent.putExtra("class_time",tk[1]);
+                startActivity(intent);
+            }
+        });
     }
 }

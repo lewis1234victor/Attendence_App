@@ -1,4 +1,4 @@
-package com.google.android.gms.samples.vision.ocrreader;
+package com.c.idscanner;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.samples.vision.ocrreader.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -31,7 +32,7 @@ public class SignUp extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         FirebaseApp.initializeApp(this);
         FirebaseDatabase refftemp=FirebaseDatabase.getInstance();
-        reff = refftemp.getReference().child("Professors");
+        reff = refftemp.getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
         emailId = findViewById(R.id.editText);
         password = findViewById(R.id.editText2);
@@ -51,18 +52,18 @@ public class SignUp extends AppCompatActivity {
                     password.requestFocus();
                 }
                 else  if(email.isEmpty() && pwd.isEmpty()){
-                    Toast.makeText(SignUp.this,"Fields Are Empty!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUp.this,"Fields Are Empty!", Toast.LENGTH_SHORT).show();
                 }
                 else  if(!(email.isEmpty() && pwd.isEmpty())){
                     mFirebaseAuth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener(SignUp.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(!task.isSuccessful()){
-                                Toast.makeText(SignUp.this,"SignUp Unsuccessful, Please Try Again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUp.this,"SignUp Unsuccessful, Please Try Again", Toast.LENGTH_SHORT).show();
                             }
                             else {
                                 String user_id = mFirebaseAuth.getInstance().getCurrentUser().getUid();
-                                reff.push().child(user_id).setValue("test");
+                                reff.child(user_id).child("tempcourse").setValue("tempcourse");
                                 startActivity(new Intent(SignUp.this,HomeActivity.class));
 
                             }
@@ -70,7 +71,7 @@ public class SignUp extends AppCompatActivity {
                     });
                 }
                 else{
-                    Toast.makeText(SignUp.this,"Error Occurred!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUp.this,"Error Occurred!", Toast.LENGTH_SHORT).show();
 
                 }
             }

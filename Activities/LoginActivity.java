@@ -1,4 +1,4 @@
-package com.google.android.gms.samples.vision.ocrreader;
+package com.c.idscanner;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.samples.vision.ocrreader.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -39,12 +40,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if( mFirebaseUser != null ){
-                    Toast.makeText(LoginActivity.this,"You are logged in",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"You are logged in", Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(i);
                 }
                 else{
-                    Toast.makeText(LoginActivity.this,"Please Login",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Please Login", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -63,14 +64,14 @@ public class LoginActivity extends AppCompatActivity {
                     password.requestFocus();
                 }
                 else  if(email.isEmpty() && pwd.isEmpty()){
-                    Toast.makeText(LoginActivity.this,"Fields Are Empty!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Fields Are Empty!", Toast.LENGTH_SHORT).show();
                 }
                 else  if(!(email.isEmpty() && pwd.isEmpty())){
                     mFirebaseAuth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(!task.isSuccessful()){
-                                Toast.makeText(LoginActivity.this,"Login Error, Please Login Again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this,"Login Error, Please Login Again", Toast.LENGTH_SHORT).show();
                             }
                             else{
                                 Intent intToHome = new Intent(LoginActivity.this,HomeActivity.class);
@@ -80,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                     });
                 }
                 else{
-                    Toast.makeText(LoginActivity.this,"Error Occurred!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Error Occurred!", Toast.LENGTH_SHORT).show();
 
                 }
 

@@ -1,47 +1,68 @@
-package com.google.android.gms.samples.vision.ocrreader;
+package com.c.idscanner;
 
-import android.util.SparseArray;
+import android.util.Log;
+import android.widget.TextView;
 
-import com.google.android.gms.samples.vision.ocrreader.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 
-/**
- * A very simple Processor which receives detected TextBlocks and adds them to the overlay
- * as OcrGraphics.
- */
+import java.util.Arrays;
+
 public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
+    TextView textView;
 
-    private GraphicOverlay<OcrGraphic> mGraphicOverlay;
-
-    OcrDetectorProcessor(GraphicOverlay<OcrGraphic> ocrGraphicOverlay) {
-        mGraphicOverlay = ocrGraphicOverlay;
+   OcrDetectorProcessor(TextView tv) {
+        textView = tv;
     }
 
-    /**
-     * Called by the detector to deliver detection results.
-     * If your application called for it, this could be a place to check for
-     * equivalent detections by tracking TextBlocks that are similar in location and content from
-     * previous frames, or reduce noise by eliminating TextBlocks that have not persisted through
-     * multiple detections.
-     */
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
-        mGraphicOverlay.clear();
-        SparseArray<TextBlock> items = detections.getDetectedItems();
-        for (int i = 0; i < items.size(); ++i) {
-            TextBlock item = items.valueAt(i);
-
-            OcrGraphic graphic = new OcrGraphic(mGraphicOverlay, item);
-            mGraphicOverlay.add(graphic);
+        for (int i = 0; i < detections.getDetectedItems().size(); ++i) {
+            textView.append(detections.getDetectedItems().valueAt(i).getValue());
         }
-    }
+        String textParse = textView.getText().toString();
+        textView.setText("");
 
-    /**
-     * Frees the resources associated with this detection processor.
-     */
+        int tempi=0;
+        char[] jnum=new char[9];
+        Log.i("errors","finding jnum");
+        for(int i=0;i<textParse.length();i++){
+            if(textParse.charAt(i)=='J' && textParse.charAt(i+1) >='0' && textParse.charAt(i+1) <='9'){
+                for(int x=0;x<9;x++) {
+                    jnum[x] = textParse.charAt(i+x);
+                    Log.i("errors","jnum:"+jnum[x]);
+                }
+                tempi=i;
+                break;
+            }
+        }
+        Log.i("errors","jnum:"+new String(jnum));
+        int count=0;
+        for(int i=tempi;(textParse.charAt(i) >= 'a' && textParse.charAt(i) <= 'z') || (textParse.charAt(i) >= 'A' && textParse.charAt(i) <= 'Z' || (textParse.charAt(i)==' '));i--) {
+                count++;
+                Log.i("errors","in1");
+        }
+        char name[] = new char[count];
+        for(int i=1;i<count;i++){
+            Log.i("errors","in2");
+            name[i] = textParse.charAt(tempi-count+i);
+        }
+        Log.i("errors","name:"+new String(name));
+        Log.i("errors","textviewtxt:"+textParse);
+        textView.append("Name:");
+        char[] n = Arrays.copyOfRange(name, 1, name.length);
+        String namestr = new String(n);
+        Log.i("errors","namestrproc:"+namestr);
+        textView.append(namestr);
+        textView.append("\nJNumber:");
+        String jnumstr = new String(jnum);
+        textView.append(jnumstr);
+        String IDData[] = new String[2];
+        IDData[0] = namestr;
+        IDData[1] = jnumstr;
+
+    }
     @Override
     public void release() {
-        mGraphicOverlay.clear();
     }
 }
